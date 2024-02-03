@@ -41,6 +41,8 @@ n8 = "- " + "- " + "- " + "O " + "O "
 n9 = "- " + "- " + "- " + "- " + "O "
 n0 = "- " + "- " + "- " + "- " + "- "
 
+spaceCounter = 0
+
 def translator():
     button.pack_forget()
     choice1.pack()
@@ -250,14 +252,14 @@ def translateM():
     wordM.pack()
     submitM.pack()
     touchE.pack()
-    touchDot.pack()
-    touchDash.pack()
+    touchDot.place(x=25, y = 150)
+    touchDash.place(x = 215, y = 150)
+    touchSpace.place(x=25, y=275)
+    touchDelete.place(x = 215, y = 275)
 
-def resultE():
-    symbol_split_index = string.split(" ")
-    print(symbol_split_index)
+def decodeE(ans):
     zeroString = ""
-    for X in symbol_split_index:
+    for X in ans:
         if "O-" == X:
             zeroString = zeroString + "a"
             answer.config(text = zeroString)
@@ -442,17 +444,55 @@ def resultE():
             zeroString = zeroString + "0"
             answer.config(text=zeroString)
             answer.pack()
+def resultE():
+    global wordM
+    input = wordM.get()
+    symbol_split_index = input.split(" ")
+    print(symbol_split_index)
+    decodeE(symbol_split_index)
 def dotTouch():
     global wordM
     codeList.append('O')
+    global spaceCounter
+    spaceCounter = 0
     codeString = ''.join(map(str, codeList))
-    print(codeString)
+    symbol_split_index = codeString.split(" ")
+    print(symbol_split_index)
+    decodeE(symbol_split_index)
 
 def dashTouch():
     global wordM
+    global spaceCounter
+    spaceCounter = 0
     codeList.append('-')
     codeString = ''.join(map(str, codeList))
-    print(codeString)
+    symbol_split_index = codeString.split(" ")
+    print(symbol_split_index)
+    decodeE(symbol_split_index)
+
+def spaceTouch():
+    global wordM
+    global spaceCounter
+    spaceCounter += 1
+    if (spaceCounter == 1):
+        codeList.append(' ')
+        codeString = ''.join(map(str, codeList))
+        symbol_split_index = codeString.split(" ")
+        print(symbol_split_index)
+        decodeE(symbol_split_index)
+def deleteTouch():
+    global wordM
+    global spaceCounter
+    spaceCounter = 0
+    range = len(codeList)
+    if (range >= 2):
+        codeList.pop(range - 1)
+        codeString = ''.join(map(str, codeList))
+        symbol_split_index = codeString.split(" ")
+        print(symbol_split_index)
+        decodeE(symbol_split_index)
+    else:
+        answer.pack_forget()
 
 window = Tk()
 window.geometry('420x420')
@@ -464,12 +504,15 @@ wordE = Entry()
 wordE.focus_set()
 wordM = Entry()
 wordM.focus_set()
-submitE = ttk.Button(window, text = "Submit", command = resultM)
-string = wordM.get()
-submitM = ttk.Button(window, text = "Submit", command = resultE)
+submitE = Button(window, text = "Submit", command = resultM)
+submitM = Button(window, text = "Submit", command = resultE)
 codeList = []
 touchE = Label(window, text = "OR TOUCH/CLICK THE MORSE CODE")
-touchDot = ttk.Button(window, text = "O", command = dotTouch)
-touchDash = ttk.Button(window, text = "-", command = dashTouch)
+style = ttk.Style()
+style.configure("TButton", padding=(12, 40))
+touchDot = ttk.Button(window, text = "O", width = 25, command = dotTouch, style = "TButton")
+touchDash = ttk.Button(window, text = "-", width = 25, command = dashTouch, style = 'TButton')
+touchSpace = ttk.Button(window, text = "SPACE", width = 25, command = spaceTouch, style = "TButton")
+touchDelete = ttk.Button(window, text = "BACKSPACE", width = 25, command = deleteTouch, style = "TButton")
 answer = Label(window, text = "")
 window.mainloop()
